@@ -1,0 +1,245 @@
+<body style="background-color:lightblue;">
+
+---
+title: "GIS_Assignment1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library, include=FALSE}
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(performance)
+library(ggplot2)
+library(see)
+library(patchwork)
+library(pbkrtest)
+library(ggtext)
+library(asbio)
+library(ggfortify)
+library(bootstrap)
+library(GGally)
+library(MuMIn)
+library(ggsn)
+library(leaflet)
+library(mapdata)
+library(maptools)
+library(rgdal)
+library(tidyverse)
+```
+
+
+```{r read Ohio_County_Data}
+county_Ohio <- read.csv("county_Ohio.csv")
+
+```
+
+
+```{r get_ohio_alone}
+state <- map_data("state")
+county <- map_data("county")
+```
+
+
+```{r filter county}
+oh <- county %>% 
+  filter(region=="ohio") 
+```
+
+```{r Ohio_counties merged}
+Ohio_Counties <- merge(x = oh, y = county_Ohio, by.x = "subregion", by.y = "demographics", all = TRUE)
+```
+
+```{r ggplot1, fig.height=8, fig.width=12}
+ggplot(Ohio_Counties) + 
+  geom_polygon(aes(x=long, y=lat, group=group, fill = Population), color = "black")
+```
+
+
+
+#Cuyahoga County and Franklin County have the highest population
+
+
+
+<center>![Figure 1. Edgewater Park](images/edgewater.jpg){width=80%}</center>
+
+
+
+
+
+<center>![Figure 2. Downtown Cleveland, Ohio](images/cleveland.jpg){width=40%}</center>
+
+
+
+
+
+
+<center>![Figure 3. Rock and Roll Hall of Fame](images/RockHall.jpg){width=40%}</center>
+
+
+
+
+
+
+```{r read kml_South_Bass}
+South_Bass <- readOGR("./South Bass_points.kml")
+```
+
+
+```{r southbass}
+leaflet(South_Bass) %>% 
+  addTiles()%>%
+  addProviderTiles(providers$CartoDB.Positron, group = "CartoDB") %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap, group = "NatGeo") %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "ESRI") %>%
+    setView(lng = -82.8177851, lat = 41.6530346, zoom = 17) %>%
+  addCircleMarkers(popup = South_Bass@data$Name,
+                   label = South_Bass@data$Description,
+                   group = "APSU",
+                   weight = 2,
+                   color = "grey",
+                   fillColor = "red",
+                   fillOpacity = 0.7) %>%
+  addLayersControl(
+    baseGroups = c("OSM", "CartoDB", "NatGeo", "ESRI"),
+    options = layersControlOptions(collapsed = FALSE),
+    overlayGroups = "Bars")
+
+```
+
+
+
+
+```{r terrain}
+leaflet() %>% 
+  setView(lng =-82.8210095, lat = 41.6581769, zoom = 15) %>%
+  addWMSTiles("https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer", layers = "0") %>%
+  addMiniMap(zoomLevelOffset = -4) %>%
+  addScaleBar()
+```
+
+<center>![Figure 4. Lake Erie Sunset](images/gib.jpg){width=80%}</center>
+
+
+<center>![Figure 5. Gibraltar Island](images/gibraltar.jpeg.jpg){width=80%}</center>
+
+                                  
+              
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+#Now Back to Tennessee Study Sites!!!
+
+```{r state map}  
+state <- map_data("state")
+county <- map_data("county")
+apsu_point <- data.frame("x" = -87.353069, "y" = 36.533654)
+```
+
+
+
+```{r showing state of TN}
+tn <- county %>% 
+  filter(region=="tennessee")
+```
+
+```{r montco}
+montco <- county %>% 
+  filter(region=="tennessee") %>% 
+  filter(subregion=="montgomery")
+```
+
+
+
+
+
+```{r ggplot2}
+ggplot() + geom_polygon(data = state, aes(x=long, y = lat, group = group),
+                        fill = "white", color="black") + 
+           geom_polygon(data = tn, aes(x=long, y = lat, group = group),
+                        fill = "gray", color="black") + 
+           geom_polygon(data = montco, aes(x=long, y = lat, group = group),
+                        fill = "blue", color="black") + 
+           geom_point(data = apsu_point, aes(x=x,y=y), color="black") +
+  coord_fixed(xlim = c(-91, -81),  ylim = c(34, 55), ratio = 1.2) + 
+  xlab("Longitude") + ylab("Latitude") + ggtitle("Montgomery Co., TN")
+```
+
+
+
+```{r ggplot3}
+ggplot() + geom_polygon(data = state, aes(x=long, y = lat, group = group),
+                        fill = "white", color="black") + 
+           geom_polygon(data = tn, aes(x=long, y = lat, group = group),
+                        fill = "gray", color="black") + 
+           geom_polygon(data = montco, aes(x=long, y = lat, group = group),
+                        fill = "blue", color="black") + 
+           geom_point(data = apsu_point, aes(x=x,y=y), color="red") +
+  coord_fixed(xlim = c(-91, -81),  ylim = c(34, 37), ratio = 1.2) + 
+  xlab("Longitude") + ylab("Latitude") + ggtitle("Montgomery Co., TN")
+```
+#Intercative map: 
+
+```{r read kml_sites_srbd}
+Sites <- readOGR("./GIS_Assignment3.kml")
+```
+
+leaflet(GIS_Assignment)
+
+```{r add markers}
+leaflet(Sites) %>% 
+  addTiles() %>% 
+  addMarkers(popup = Sites@data$Name)%>%
+  addProviderTiles(providers$CartoDB.Positron, group = "CartoDB") %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap, group = "NatGeo") %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "ESRI") %>%
+  setView(lng = -87.2696542, lat = 36.4992402, zoom = 17)%>%
+  addCircleMarkers(popup = Sites@data$Name,
+                   label = Sites@data$Description,
+                   group = "WBCS Points",
+                   weight = 2,
+                   color = "grey",
+                   fillColor = "red",
+                   fillOpacity = 0.7) %>%
+  addLayersControl(
+    baseGroups = c("OSM", "CartoDB", "NatGeo", "ESRI"),
+    options = layersControlOptions(collapsed = FALSE),
+    overlayGroups = "WBCS Points")
+```
+
+
+
+                   
