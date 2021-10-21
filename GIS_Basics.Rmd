@@ -72,14 +72,14 @@ ggplot(Ohio_Counties) +
 
 
 
-<center>![Figure 2. Downtown Cleveland, Ohio](images/cleveland.jpg){width=40%}</center>
+<center>![Figure 2. Downtown Cleveland, Ohio](images/cleveland.jpg){width=60%}</center>
 
 
 
 
 
 
-<center>![Figure 3. Rock and Roll Hall of Fame](images/RockHall.jpg){width=40%}</center>
+<center>![Figure 3. Rock and Roll Hall of Fame](images/RockHall.jpg){width=60%}</center>
 
 
 
